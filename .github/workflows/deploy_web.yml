@@ -12,12 +12,10 @@ jobs:
 
     steps:
 
-    # Get Flutter source code
     - name: Checkout repository
       uses: actions/checkout@v4
 
 
-    # Install Flutter
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
@@ -25,34 +23,46 @@ jobs:
         channel: stable
 
 
-    # Install dependencies
     - name: Flutter pub get
       run: flutter pub get
 
 
-    # Build web application
     - name: Build Flutter Web
       run: flutter build web --release
 
 
-    # Upload build files to VPS
+    # Remove old files
+    - name: Clean old web files
+      uses: appleboy/ssh-action@v1
+      with:
+        host: ${{ secrets.VPS_HOST }}
+        username: ${{ secrets.VPS_USERNAME }}
+        password: ${{ secrets.VPS_PASSWORD }}
+        port: 22
+        script: |
+          rm -rf /var/www/lactocontrol_web/*
+
+
+    # Upload directly to web root
     - name: Upload Flutter Web to VPS
       uses: appleboy/scp-action@v0.1.7
       with:
         host: ${{ secrets.VPS_HOST }}
         username: ${{ secrets.VPS_USERNAME }}
         password: ${{ secrets.VPS_PASSWORD }}
+        port: 22
         source: "build/web/*"
         target: "/var/www/lactocontrol_web"
+        strip_components: 2
 
 
-    # Restart nginx
     - name: Restart Nginx
       uses: appleboy/ssh-action@v1
       with:
         host: ${{ secrets.VPS_HOST }}
         username: ${{ secrets.VPS_USERNAME }}
         password: ${{ secrets.VPS_PASSWORD }}
+        port: 22
         script: |
-          sudo nginx -t
-          sudo systemctl reload nginx
+          nginx -t
+          systemctl reload nginx
