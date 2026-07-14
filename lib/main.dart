@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lactosure_control/screens/authen/login.dart';
+import 'package:lactosure_control/screens/dashboard/home.dart';
 
 void main() {
   runApp(const MyApp());
@@ -9,6 +9,6 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(debugShowCheckedModeBanner: false, home: LoginPage());
+    return MaterialApp(debugShowCheckedModeBanner: false, home: Dashboardhome());
   }
 }
