@@ -12,57 +12,68 @@ jobs:
 
     steps:
 
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      # 1. Get code
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
 
-    - name: Setup Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: '3.41.6'
-        channel: stable
+      # 2. Setup Flutter
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.41.6"
+          channel: stable
+          cache: true
 
 
-    - name: Flutter pub get
-      run: flutter pub get
+      # 3. Install packages
+      - name: Install Dependencies
+        run: flutter pub get
 
 
-    - name: Build Flutter Web
-      run: flutter build web --release
+      # 4. Clean and Build
+      - name: Build Flutter Web
+        run: |
+          flutter clean
+          flutter pub get
+          flutter build web --release
 
 
-    # Remove old files
-    - name: Clean old web files
-      uses: appleboy/ssh-action@v1
-      with:
-        host: ${{ secrets.VPS_HOST }}
-        username: ${{ secrets.VPS_USERNAME }}
-        password: ${{ secrets.VPS_PASSWORD }}
-        port: 22
-        script: |
-          rm -rf /var/www/lactocontrol_web/*
+      # 5. Remove old website files
+      - name: Clean VPS Web Folder
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          port: 22
+          script: |
+            rm -rf /var/www/lactocontrol_web/*
 
 
-    # Upload directly to web root
-    - name: Upload Flutter Web to VPS
-      uses: appleboy/scp-action@v0.1.7
-      with:
-        host: ${{ secrets.VPS_HOST }}
-        username: ${{ secrets.VPS_USERNAME }}
-        password: ${{ secrets.VPS_PASSWORD }}
-        port: 22
-        source: "build/web/*"
-        target: "/var/www/lactocontrol_web"
-        strip_components: 2
+      # 6. Upload Flutter Web
+      - name: Upload Web Files
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          port: 22
+          source: "build/web/*"
+          target: "/var/www/lactocontrol_web"
+          strip_components: 2
 
 
-    - name: Restart Nginx
-      uses: appleboy/ssh-action@v1
-      with:
-        host: ${{ secrets.VPS_HOST }}
-        username: ${{ secrets.VPS_USERNAME }}
-        password: ${{ secrets.VPS_PASSWORD }}
-        port: 22
-        script: |
-          nginx -t
-          systemctl reload nginx
+      # 7. Fix permissions + restart nginx
+      - name: Set Permissions
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          port: 22
+          script: |
+            chown -R www-data:www-data /var/www/lactocontrol_web
+            chmod -R 755 /var/www/lactocontrol_web
+            nginx -t
+            systemctl reload nginx
