@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lactosure_control/screens/admin/adminscren.dart';
 import 'package:lactosure_control/screens/authen/forget_pw.dart';
 import 'package:lactosure_control/screens/authen/register.dart';
-import 'package:lactosure_control/screens/dashboard/home.dart';
+import 'package:lactosure_control/screens/users/dashboard/home.dart';
 import 'package:lactosure_control/services/authen_service.dart';
 import 'package:lactosure_control/widgets/custom_button.dart';
 import 'package:lactosure_control/widgets/custom_textfield.dart';

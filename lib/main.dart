@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lactosure_control/screens/dashboard/home.dart';
+import 'package:lactosure_control/screens/users/dashboard/home.dart';
 
 void main() {
   runApp(const MyApp());
