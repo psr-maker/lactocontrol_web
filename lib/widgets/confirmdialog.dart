@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 Future<bool?> showConfirmDialog(
   BuildContext context,
   String action,
@@ -8,12 +9,13 @@ Future<bool?> showConfirmDialog(
     context: context,
     builder: (context) {
       return AlertDialog(
+        backgroundColor: Color(0xFFADC6FF),
         title: Center(
           child: Text(
             "$action Confirmation",
             style: TextStyle(
               fontSize: 18,
-              color: const Color.fromARGB(255, 25, 77, 38),
+              color: Color(0xFF182334),
               fontWeight: FontWeight.bold,
             ),
           ),

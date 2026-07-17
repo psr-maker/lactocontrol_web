@@ -39,12 +39,26 @@ class _SettingsState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFF0B1325),
       appBar: AppBar(
+        backgroundColor: Color(0xFF11192A),
+        foregroundColor: Color(0xFF0B1325),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
+          icon: const Icon(
+            Icons.arrow_back_ios,
+            color: Color.fromARGB(255, 7, 218, 218),
+          ),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text("Settings"),
+        title: const Text(
+          "Settings",
+          style: TextStyle(
+            color: Color.fromARGB(255, 7, 218, 218),
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 0.5,
+          ),
+        ),
       ),
       body: ListView(
         padding: const EdgeInsets.all(20),

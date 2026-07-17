@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:lactosure_control/screens/admin/dashboard/settings.dart';
 import 'package:lactosure_control/screens/users/mac_info.dart';
 import 'package:lactosure_control/services/web_serial_service.dart';
 
@@ -19,13 +20,13 @@ class _DashboardhomeState extends State<Dashboardhome> {
     super.initState();
   }
 
-
   Future<void> showComPortDialog(BuildContext context) async {
     showDialog(
       context: context,
 
       builder: (context) {
         return AlertDialog(
+          backgroundColor: Color(0xFFADC6FF),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
@@ -40,7 +41,12 @@ class _DashboardhomeState extends State<Dashboardhome> {
 
           content: const SizedBox(
             height: 100,
-            child: Center(child: Text("Click Connect to select your device")),
+            child: Center(
+              child: Text(
+                "Click Connect to select your device",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
           ),
 
           actions: [
@@ -86,18 +92,26 @@ class _DashboardhomeState extends State<Dashboardhome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade100,
+      backgroundColor: Color(0xFF0B1325),
       appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black87,
+        backgroundColor: Color(0xFF11192A),
+        foregroundColor: Color(0xFF0B1325),
         title: const Text(
           "LactoSure Control",
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: Color.fromARGB(255, 7, 218, 218),
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 0.5,
+          ),
         ),
         actions: [
           IconButton(
-            icon: Icon(isConnected ? Icons.link_off : Icons.usb),
+            icon: Icon(
+              isConnected ? Icons.link_off : Icons.usb,
+              color: Color.fromARGB(255, 7, 218, 218),
+              size: 20,
+            ),
 
             tooltip: isConnected ? "Disconnect" : "Connect Serial",
 
@@ -122,12 +136,26 @@ class _DashboardhomeState extends State<Dashboardhome> {
               }
             },
           ),
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Settings()),
+              );
+            },
+            icon: Icon(
+              Icons.settings,
+              color: Color.fromARGB(255, 7, 218, 218),
+              size: 20,
+            ),
+          ),
         ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(25),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             GestureDetector(
               onTap: () {
@@ -145,7 +173,26 @@ class _DashboardhomeState extends State<Dashboardhome> {
                 );
               },
 
-              child: Container(child: Text("Correction")),
+              child: Center(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Color.fromARGB(255, 7, 218, 218),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  width: 300,
+                  height: 200,
+                  child: Center(
+                    child: Text(
+                      "Correction",
+                      style: TextStyle(
+                        color: Color(0xFF0B1325),
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ),
           ],
         ),

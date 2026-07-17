@@ -12,6 +12,9 @@ class _InfoState extends State<Info> {
   final TextEditingController t1 = TextEditingController();
   final TextEditingController t2 = TextEditingController();
   final TextEditingController t3 = TextEditingController();
+  final dealer1 = TextEditingController();
+  final dealer2 = TextEditingController();
+  final dealer3 = TextEditingController();
 
   String fixLength(String text, int length) {
     if (text.length > length) {
@@ -107,35 +110,174 @@ class _InfoState extends State<Info> {
     return value.split(' ').map((e) => int.parse(e, radix: 16)).toList();
   }
 
+  // @override
+  // Widget build(BuildContext context) {
+  //   return Scaffold(
+  //     appBar: AppBar(title: const Text("Correction")),
+
+  //     body: Padding(
+  //       padding: const EdgeInsets.all(20),
+
+  //       child: Column(
+  //         children: [
+  //           TextField(
+  //             controller: t1,
+  //             decoration: const InputDecoration(labelText: "Value 1"),
+  //           ),
+
+  //           TextField(
+  //             controller: t2,
+  //             decoration: const InputDecoration(labelText: "Value 2"),
+  //           ),
+
+  //           TextField(
+  //             controller: t3,
+  //             decoration: const InputDecoration(labelText: "Value 3"),
+  //           ),
+
+  //           const SizedBox(height: 30),
+
+  //           ElevatedButton(onPressed: sendCommand, child: const Text("Write")),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Correction")),
+      backgroundColor: Color(0xFF0B1325),
+      appBar: AppBar(
+        backgroundColor: Color(0xFF11192A),
+        foregroundColor: Color(0xFF0B1325),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: Color.fromARGB(255, 7, 218, 218),
+            size: 20,
+          ),
+        ),
+        title: const Text(
+          "Correction",
+          style: TextStyle(
+            color: Color.fromARGB(255, 7, 218, 218),
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 0.5,
+          ),
+        ),
+      ),
 
-      body: Padding(
+      body: Center(
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 900),
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: _buildSection(
+                      title: "Channel",
+                      children: [
+                        _field(t1, "Channel 1"),
+                        const SizedBox(height: 15),
+                        _field(t2, "Channel 2"),
+                        const SizedBox(height: 15),
+                        _field(t3, "Channel 3"),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(width: 25),
+
+                  Expanded(
+                    child: _buildSection(
+                      title: "Dealer",
+                      children: [
+                        _field(dealer1, "Dealer 1"),
+                        const SizedBox(height: 15),
+                        _field(dealer2, "Dealer 2"),
+                        const SizedBox(height: 15),
+                        _field(dealer3, "Dealer 3"),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 50),
+
+              SizedBox(
+                width: 180,
+                height: 48,
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(
+                      Color.fromARGB(255, 255, 157, 10),
+                    ),
+                  ),
+                  onPressed: sendCommand,
+                  child: const Text(
+                    "Write",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSection({
+    required String title,
+    required List<Widget> children,
+  }) {
+    return Card(
+      color: Color.fromARGB(255, 77, 100, 153),
+      elevation: 3,
+      child: Padding(
         padding: const EdgeInsets.all(20),
-
         child: Column(
           children: [
-            TextField(
-              controller: t1,
-              decoration: const InputDecoration(labelText: "Value 1"),
+            Text(
+              title,
+              style: TextStyle(
+                color: Color(0xFF0B1325),
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-
-            TextField(
-              controller: t2,
-              decoration: const InputDecoration(labelText: "Value 2"),
-            ),
-
-            TextField(
-              controller: t3,
-              decoration: const InputDecoration(labelText: "Value 3"),
-            ),
-
-            const SizedBox(height: 30),
-
-            ElevatedButton(onPressed: sendCommand, child: const Text("Write")),
+            const Divider(height: 30),
+            ...children,
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _field(TextEditingController controller, String label) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: const TextStyle(color: Colors.white, fontSize: 12),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Color(0xFF334155)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Colors.white, width: 1.5),
         ),
       ),
     );

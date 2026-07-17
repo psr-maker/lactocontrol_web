@@ -139,21 +139,7 @@ class _UsersPageState extends State<UsersPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: isSearching
-            ? TextField(
-                controller: searchController,
-                style: Theme.of(context).textTheme.titleMedium,
-                onChanged: filterSearch,
-                decoration: InputDecoration(
-                  hintText: "Search users...",
-                  hintStyle: Theme.of(context).textTheme.titleMedium,
-                  border: InputBorder.none,
-                ),
-              )
-            : const Text("Users"),
-      ),
-
+      backgroundColor: Color(0xFF0B1325),
       body: isLoading
           ? const Center(child: RotatingFlower())
           : Padding(
@@ -165,7 +151,11 @@ class _UsersPageState extends State<UsersPage>
                     children: [
                       Text(
                         "All Users",
-                        style: Theme.of(context).textTheme.headlineMedium,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
 
                       const Spacer(),
@@ -174,15 +164,20 @@ class _UsersPageState extends State<UsersPage>
                         width: 250,
                         child: TextField(
                           controller: searchController,
-                          style: Theme.of(context).textTheme.titleMedium,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
                           decoration: InputDecoration(
                             hintText: "Search users",
-                            hintStyle: Theme.of(context).textTheme.titleMedium,
-                            border: InputBorder.none,
-                            prefixIcon: Icon(
-                              Icons.search,
-                              color: Theme.of(context).colorScheme.onPrimary,
+                            hintStyle: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
                             ),
+                            border: InputBorder.none,
+                            prefixIcon: Icon(Icons.search, color: Colors.white),
                           ),
                           onChanged: (value) {
                             setState(() {});
@@ -194,16 +189,40 @@ class _UsersPageState extends State<UsersPage>
 
                       DropdownButton<String>(
                         value: selectedFilter,
-                        dropdownColor: Theme.of(context).colorScheme.primary,
+                        dropdownColor: Color(0xFFADC6FF),
                         items: const [
-                          DropdownMenuItem(value: "All", child: Text("All")),
+                          DropdownMenuItem(
+                            value: "All",
+                            child: Text(
+                              "All",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
                           DropdownMenuItem(
                             value: "Active",
-                            child: Text("Active"),
+                            child: Text(
+                              "Active",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                           DropdownMenuItem(
                             value: "Pending",
-                            child: Text("Pending"),
+                            child: Text(
+                              "Pending",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                         ],
                         onChanged: (value) {
@@ -224,7 +243,7 @@ class _UsersPageState extends State<UsersPage>
                       vertical: 14,
                     ),
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.secondary,
+                      color: Color(0xFFADC6FF),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Row(
@@ -233,7 +252,11 @@ class _UsersPageState extends State<UsersPage>
                           flex: 1,
                           child: Text(
                             "Name",
-                            style: Theme.of(context).textTheme.bodyLarge,
+                            style: TextStyle(
+                              color: Color(0xFF0B1325),
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
 
@@ -241,7 +264,11 @@ class _UsersPageState extends State<UsersPage>
                           flex: 1,
                           child: Text(
                             "Email",
-                            style: Theme.of(context).textTheme.bodyLarge,
+                            style: TextStyle(
+                              color: Color(0xFF0B1325),
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
 
@@ -249,14 +276,22 @@ class _UsersPageState extends State<UsersPage>
                           flex: 1,
                           child: Text(
                             "Status",
-                            style: Theme.of(context).textTheme.bodyLarge,
+                            style: TextStyle(
+                              color: Color(0xFF0B1325),
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                         Expanded(
                           flex: 1,
                           child: Text(
                             "Action",
-                            style: Theme.of(context).textTheme.bodyLarge,
+                            style: TextStyle(
+                              color: Color(0xFF0B1325),
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ],
@@ -302,11 +337,28 @@ class _UsersPageState extends State<UsersPage>
       ),
       child: Row(
         children: [
-          Expanded(child: Text(user["name"] ?? "")),
+          Expanded(
+            child: Text(
+              user["name"] ?? "",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
 
           Expanded(
             flex: 2,
-            child: Text(user["email"] ?? "", overflow: TextOverflow.ellipsis),
+            child: Text(
+              user["email"] ?? "",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
 
           Expanded(

@@ -20,8 +20,19 @@ class _AdminScreenState extends State<AdminScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFF0B1325),
       appBar: AppBar(
-        title: const Text("Admin Dashboard"),
+        backgroundColor: Color(0xFF11192A),
+        foregroundColor: Color(0xFF0B1325),
+        title: const Text(
+          "Admin Dashboard",
+          style: TextStyle(
+            color: Color.fromARGB(255, 7, 218, 218),
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 0.5,
+          ),
+        ),
         centerTitle: false,
         actions: [
           _buildTopNavItem("Dashboard", 0),
@@ -30,18 +41,21 @@ class _AdminScreenState extends State<AdminScreen> {
           _buildTopNavItem("Users", 1),
           const SizedBox(width: 15),
 
-          _buildTopNavItem("Society", 2),
-          const SizedBox(width: 15),
+          // _buildTopNavItem("Society", 2),
+          // const SizedBox(width: 15),
 
-          _buildTopNavItem("Machine", 3),
-          const SizedBox(width: 15),
+          // _buildTopNavItem("Machine", 3),
+          // const SizedBox(width: 15),
 
-          // Desktop Only
-          _buildTopNavItem("BLE", 4),
-          const SizedBox(width: 15),
-
+          // // Desktop Only
+          // _buildTopNavItem("BLE", 4),
+          // const SizedBox(width: 15),
           IconButton(
-            icon: const Icon(Icons.settings),
+            icon: const Icon(
+              Icons.settings,
+              color: Color.fromARGB(255, 7, 218, 218),
+              size: 20,
+            ),
             onPressed: () {
               Navigator.push(
                 context,
