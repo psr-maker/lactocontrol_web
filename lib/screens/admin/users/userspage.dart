@@ -371,15 +371,48 @@ class _UsersPageState extends State<UsersPage>
             ),
           ),
 
+          // Expanded(
+          //   flex: 2,
+          //   child: Center(
+          //     child: IconButton(
+          //       icon: const Icon(Icons.delete, color: Colors.red),
+          //       onPressed: () {
+          //         deleteUser(user["uId"]);
+          //       },
+          //     ),
+          //   ),
+          // ),
           Expanded(
             flex: 2,
-            child: Center(
-              child: IconButton(
-                icon: const Icon(Icons.delete, color: Colors.red),
-                onPressed: () {
-                  deleteUser(user["uId"]);
-                },
-              ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Show Approve button only if status is Pending
+                if (!approved)
+                  ElevatedButton(
+                    onPressed: () {
+                      approveUser(user["uId"]);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 10,
+                      ),
+                    ),
+                    child: const Text("Approve"),
+                  ),
+
+                if (!approved) const SizedBox(width: 10),
+
+                IconButton(
+                  icon: const Icon(Icons.delete, color: Colors.red),
+                  onPressed: () {
+                    deleteUser(user["uId"]);
+                  },
+                ),
+              ],
             ),
           ),
         ],

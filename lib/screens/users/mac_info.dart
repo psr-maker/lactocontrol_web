@@ -25,9 +25,9 @@ class _InfoState extends State<Info> {
   }
 
   Future<void> sendCommand() async {
-    String value1 = fixLength(t1.text, 32);
-    String value2 = fixLength(t2.text, 20);
-    String value3 = fixLength(t3.text, 29);
+    String value1 = fixLength(dealer1.text, 32);
+    String value2 = fixLength(dealer2.text, 20);
+    String value3 = fixLength(dealer3.text, 29);
 
     String fullText = value1 + value2 + value3;
 
@@ -110,39 +110,33 @@ class _InfoState extends State<Info> {
     return value.split(' ').map((e) => int.parse(e, radix: 16)).toList();
   }
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     appBar: AppBar(title: const Text("Correction")),
+  Future<void> writeField({
+    required TextEditingController controller,
+    required int address,
+    required int length,
+  }) async {
+    String text = fixLength(controller.text, length);
 
-  //     body: Padding(
-  //       padding: const EdgeInsets.all(20),
+    List<int> command = [
+      0x40,
+      0x0C,
+      0xFA,
+      0xA0,
+      (address >> 8) & 0xFF,
+      address & 0xFF,
+      ...text.codeUnits,
+    ];
 
-  //       child: Column(
-  //         children: [
-  //           TextField(
-  //             controller: t1,
-  //             decoration: const InputDecoration(labelText: "Value 1"),
-  //           ),
+    int lrc = 0;
+    for (final b in command) {
+      lrc ^= b;
+    }
 
-  //           TextField(
-  //             controller: t2,
-  //             decoration: const InputDecoration(labelText: "Value 2"),
-  //           ),
+    command.add(lrc);
 
-  //           TextField(
-  //             controller: t3,
-  //             decoration: const InputDecoration(labelText: "Value 3"),
-  //           ),
+    await sendMachineCommand(command);
+  }
 
-  //           const SizedBox(height: 30),
-
-  //           ElevatedButton(onPressed: sendCommand, child: const Text("Write")),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -184,11 +178,27 @@ class _InfoState extends State<Info> {
                     child: _buildSection(
                       title: "Channel",
                       children: [
-                        _field(t1, "Channel 1"),
-                        const SizedBox(height: 15),
-                        _field(t2, "Channel 2"),
-                        const SizedBox(height: 15),
-                        _field(t3, "Channel 3"),
+                        _field(t1, "Channel 1", () async {
+                          await writeField(
+                            controller: t1,
+                            address: 0x003C,
+                            length: 7,
+                          );
+                        }),
+                        _field(t2, "Channel 2", () async {
+                          await writeField(
+                            controller: t2,
+                            address: 0x0082,
+                            length: 7,
+                          );
+                        }),
+                        _field(t3, "Channel 3", () async {
+                          await writeField(
+                            controller: t3,
+                            address: 0x00C8,
+                            length: 7,
+                          );
+                        }),
                       ],
                     ),
                   ),
@@ -199,37 +209,56 @@ class _InfoState extends State<Info> {
                     child: _buildSection(
                       title: "Dealer",
                       children: [
-                        _field(dealer1, "Dealer 1"),
+                        TextField(
+                          controller: dealer1,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: _inputDecoration("Dealer 1"),
+                        ),
+
                         const SizedBox(height: 15),
-                        _field(dealer2, "Dealer 2"),
+
+                        TextField(
+                          controller: dealer2,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: _inputDecoration("Dealer 2"),
+                        ),
+
                         const SizedBox(height: 15),
-                        _field(dealer3, "Dealer 3"),
+
+                        TextField(
+                          controller: dealer3,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: _inputDecoration("Dealer 3"),
+                        ),
+
+                        const SizedBox(height: 20),
+
+                        Align(
+                          alignment: Alignment.center,
+                          child: SizedBox(
+                            height: 50,
+                            width: 90,
+                            child: ElevatedButton(
+                              onPressed: sendCommand,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF07DADA),
+                                foregroundColor: const Color(0xFF0B1325),
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              child: const Text(
+                                "Write",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
                 ],
-              ),
-
-              const SizedBox(height: 50),
-
-              SizedBox(
-                width: 180,
-                height: 48,
-                child: ElevatedButton(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                      Color.fromARGB(255, 255, 157, 10),
-                    ),
-                  ),
-                  onPressed: sendCommand,
-                  child: const Text(
-                    "Write",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
               ),
             ],
           ),
@@ -242,43 +271,119 @@ class _InfoState extends State<Info> {
     required String title,
     required List<Widget> children,
   }) {
-    return Card(
-      color: Color.fromARGB(255, 77, 100, 153),
-      elevation: 3,
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            Text(
-              title,
-              style: TextStyle(
-                color: Color(0xFF0B1325),
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+    return Container(
+      padding: const EdgeInsets.all(25),
+      decoration: BoxDecoration(
+        color: const Color(0xFF16213E),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0xFF07DADA).withOpacity(.25)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(.35),
+            blurRadius: 15,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title.toUpperCase(),
+            style: const TextStyle(
+              color: Color(0xFF07DADA),
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1,
             ),
-            const Divider(height: 30),
-            ...children,
-          ],
-        ),
+          ),
+          const SizedBox(height: 25),
+          ...children,
+        ],
       ),
     );
   }
 
-  Widget _field(TextEditingController controller, String label) {
-    return TextField(
-      controller: controller,
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: const TextStyle(color: Colors.white, fontSize: 12),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Color(0xFF334155)),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Colors.white, width: 1.5),
-        ),
+  Widget _field(
+    TextEditingController controller,
+    String label,
+    VoidCallback onWrite,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 18),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: controller,
+              style: const TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                labelText: label,
+                labelStyle: const TextStyle(color: Color(0xFF94A3B8)),
+                filled: true,
+                fillColor: const Color(0xFF1E293B),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 18,
+                  vertical: 16,
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: Color(0xFF334155)),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(
+                    color: Color(0xFF07DADA),
+                    width: 2,
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          const SizedBox(width: 12),
+
+          SizedBox(
+            height: 52,
+            child: ElevatedButton.icon(
+              onPressed: onWrite,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF07DADA),
+                foregroundColor: const Color(0xFF0B1325),
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+              ),
+              label: const Text(
+                "Write",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  InputDecoration _inputDecoration(String label) {
+    return InputDecoration(
+      labelText: label,
+      labelStyle: const TextStyle(color: Color(0xFF94A3B8)),
+      filled: true,
+      fillColor: const Color(0xFF1E293B),
+
+      contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Color(0xFF334155)),
+      ),
+
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Color(0xFF07DADA), width: 2),
       ),
     );
   }

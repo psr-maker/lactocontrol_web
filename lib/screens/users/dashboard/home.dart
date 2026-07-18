@@ -58,6 +58,9 @@ class _DashboardhomeState extends State<Dashboardhome> {
             ),
 
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFF0B1325),
+              ),
               onPressed: () async {
                 Navigator.pop(context);
 
@@ -81,7 +84,13 @@ class _DashboardhomeState extends State<Dashboardhome> {
                 }
               },
 
-              child: const Text("Connect"),
+              child: const Text(
+                "Connect",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ],
         );
@@ -176,7 +185,7 @@ class _DashboardhomeState extends State<Dashboardhome> {
               child: Center(
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Color.fromARGB(255, 7, 218, 218),
+                    color: Color(0xFFADC6FF),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   width: 300,

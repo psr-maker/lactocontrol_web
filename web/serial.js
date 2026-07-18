@@ -77,7 +77,48 @@ async function writeSerial(data) {
 }
 
 
+async function disconnectSerial() {
 
+    try {
+
+        // Stop reading
+        if (reader) {
+            await reader.cancel();
+            reader.releaseLock();
+            reader = null;
+        }
+
+
+        // Release writer
+        if (writer) {
+            writer.releaseLock();
+            writer = null;
+        }
+
+
+        // Close serial port
+        if (port) {
+            await port.close();
+            port = null;
+        }
+
+
+        return {
+            success: true,
+            message: "Machine Disconnected"
+        };
+
+
+    } catch (e) {
+
+        return {
+            success: false,
+            message: e.toString()
+        };
+
+    }
+
+}
 
 async function readSerial() {
 
