@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lactosure_control/constant/global/loadingflw.dart';
 import 'package:lactosure_control/services/web_serial_service.dart';
 
 class Info extends StatefulWidget {
@@ -15,8 +16,21 @@ class _InfoState extends State<Info> {
   final dealer1 = TextEditingController();
   final dealer2 = TextEditingController();
   final dealer3 = TextEditingController();
+  bool _channel1Loading = false;
+  bool _channel2Loading = false;
+  bool _channel3Loading = false;
+  bool _dealerLoading = false;
+  // String fixLength(String text, int length) {
+  //   if (text.length > length) {
+  //     return text.substring(0, length);
+  //   }
 
+  //   return text.padRight(length, ' ');
+  // }
   String fixLength(String text, int length) {
+    // Add one leading space
+    text = " $text";
+
     if (text.length > length) {
       return text.substring(0, length);
     }
@@ -25,35 +39,38 @@ class _InfoState extends State<Info> {
   }
 
   Future<void> sendCommand() async {
-    String value1 = fixLength(dealer1.text, 32);
-    String value2 = fixLength(dealer2.text, 20);
-    String value3 = fixLength(dealer3.text, 29);
+    if (_dealerLoading) return;
 
-    String fullText = value1 + value2 + value3;
+    setState(() {
+      _dealerLoading = true;
+    });
 
-    List<int> data = fullText.codeUnits;
+    try {
+      String value1 = fixLength(dealer1.text, 32);
+      String value2 = fixLength(dealer2.text, 20);
+      String value3 = fixLength(dealer3.text, 29);
 
-    // WRITE COMMAND
-    List<int> writeCommand = [0x40, 0x56, 0xFA, 0xA0, 0x03, 0x0C, ...data];
+      String fullText = value1 + value2 + value3;
 
-    // LRC
-    int lrc = 0;
+      List<int> data = fullText.codeUnits;
 
-    for (final byte in writeCommand) {
-      lrc ^= byte;
+      List<int> writeCommand = [0x40, 0x56, 0xFA, 0xA0, 0x03, 0x0C, ...data];
+
+      int lrc = 0;
+      for (final byte in writeCommand) {
+        lrc ^= byte;
+      }
+
+      writeCommand.add(lrc);
+
+      await sendMachineCommand(writeCommand);
+    } finally {
+      if (mounted) {
+        setState(() {
+          _dealerLoading = false;
+        });
+      }
     }
-
-    writeCommand.add(lrc);
-
-    debugPrint("========== WRITE COMMAND ==========");
-
-    debugPrint(
-      writeCommand
-          .map((e) => e.toRadixString(16).padLeft(2, '0').toUpperCase())
-          .join(" "),
-    );
-
-    await sendMachineCommand(writeCommand);
   }
 
   Future<void> sendMachineCommand(List<int> writeCommand) async {
@@ -114,27 +131,43 @@ class _InfoState extends State<Info> {
     required TextEditingController controller,
     required int address,
     required int length,
+    required int button,
   }) async {
-    String text = fixLength(controller.text, length);
+    setState(() {
+      if (button == 1) _channel1Loading = true;
+      if (button == 2) _channel2Loading = true;
+      if (button == 3) _channel3Loading = true;
+    });
 
-    List<int> command = [
-      0x40,
-      0x0C,
-      0xFA,
-      0xA0,
-      (address >> 8) & 0xFF,
-      address & 0xFF,
-      ...text.codeUnits,
-    ];
+    try {
+      String text = fixLength(controller.text, length);
 
-    int lrc = 0;
-    for (final b in command) {
-      lrc ^= b;
+      List<int> command = [
+        0x40,
+        0x0C,
+        0xFA,
+        0xA0,
+        (address >> 8) & 0xFF,
+        address & 0xFF,
+        ...text.codeUnits,
+      ];
+
+      int lrc = 0;
+      for (final b in command) {
+        lrc ^= b;
+      }
+
+      command.add(lrc);
+      await sendMachineCommand(command);
+    } finally {
+      if (mounted) {
+        setState(() {
+          if (button == 1) _channel1Loading = false;
+          if (button == 2) _channel2Loading = false;
+          if (button == 3) _channel3Loading = false;
+        });
+      }
     }
-
-    command.add(lrc);
-
-    await sendMachineCommand(command);
   }
 
   @override
@@ -178,25 +211,28 @@ class _InfoState extends State<Info> {
                     child: _buildSection(
                       title: "Channel",
                       children: [
-                        _field(t1, "Channel 1", () async {
+                        _field(t1, "Channel 1", _channel1Loading, () async {
                           await writeField(
                             controller: t1,
                             address: 0x003C,
                             length: 7,
+                            button: 1,
                           );
                         }),
-                        _field(t2, "Channel 2", () async {
+                        _field(t2, "Channel 2", _channel2Loading, () async {
                           await writeField(
                             controller: t2,
                             address: 0x0082,
                             length: 7,
+                            button: 2,
                           );
                         }),
-                        _field(t3, "Channel 3", () async {
+                        _field(t3, "Channel 3", _channel3Loading, () async {
                           await writeField(
                             controller: t3,
                             address: 0x00C8,
                             length: 7,
+                            button: 3,
                           );
                         }),
                       ],
@@ -239,7 +275,7 @@ class _InfoState extends State<Info> {
                             height: 50,
                             width: 90,
                             child: ElevatedButton(
-                              onPressed: sendCommand,
+                              onPressed: _dealerLoading ? null : sendCommand,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFF07DADA),
                                 foregroundColor: const Color(0xFF0B1325),
@@ -248,10 +284,18 @@ class _InfoState extends State<Info> {
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                               ),
-                              child: const Text(
-                                "Write",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
+                              child: _dealerLoading
+                                  ? const SizedBox(
+                                      width: 22,
+                                      height: 22,
+                                      child: RotatingFlower(),
+                                    )
+                                  : const Text(
+                                      "Write",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                             ),
                           ),
                         ),
@@ -307,6 +351,7 @@ class _InfoState extends State<Info> {
   Widget _field(
     TextEditingController controller,
     String label,
+    bool loading,
     VoidCallback onWrite,
   ) {
     return Padding(
@@ -346,7 +391,6 @@ class _InfoState extends State<Info> {
           SizedBox(
             height: 52,
             child: ElevatedButton.icon(
-              onPressed: onWrite,
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF07DADA),
                 foregroundColor: const Color(0xFF0B1325),
@@ -356,10 +400,14 @@ class _InfoState extends State<Info> {
                 ),
                 padding: const EdgeInsets.symmetric(horizontal: 20),
               ),
-              label: const Text(
-                "Write",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
+              onPressed: loading ? null : onWrite,
+              label: loading
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: RotatingFlower(),
+                    )
+                  : const Text("Write"),
             ),
           ),
         ],

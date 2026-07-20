@@ -192,7 +192,7 @@ class _DashboardhomeState extends State<Dashboardhome> {
                   height: 200,
                   child: Center(
                     child: Text(
-                      "Correction",
+                      "Settings",
                       style: TextStyle(
                         color: Color(0xFF0B1325),
                         fontSize: 18,
