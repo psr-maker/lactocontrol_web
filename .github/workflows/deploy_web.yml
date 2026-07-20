@@ -52,7 +52,7 @@ jobs:
             rm -rf /var/www/lactocontrol_web/.[!.]*
 
 
-      # 6. Upload Flutter Web
+     # 6. Upload Flutter Web
       - name: Upload Web Files
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -60,10 +60,22 @@ jobs:
           username: ${{ secrets.VPS_USERNAME }}
           password: ${{ secrets.VPS_PASSWORD }}
           port: 22
-          source: "build/web/**"
-          target: "/var/www/lactocontrol_web"
-
-
+          source: "build/web/"
+          target: "/var/www/lactocontrol_web/"
+      
+      # Verify files
+      - name: Verify Deployment
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+        host: ${{ secrets.VPS_HOST }}
+        username: ${{ secrets.VPS_USERNAME }}
+        password: ${{ secrets.VPS_PASSWORD }}
+        port: 22
+        script: |
+         echo "Checking Flutter files..."
+         ls -lah /var/www/lactocontrol_web
+         echo "Checking index..."
+         ls -lah /var/www/lactocontrol_web/index.html
 
       # 7. Fix permissions + restart nginx
       - name: Set Permissions
