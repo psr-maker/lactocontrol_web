@@ -25,7 +25,7 @@ class _InfoState extends State<Info> {
 
   String fixLength(String text, int length) {
     // Add one leading space
-    text = " $text";
+    // text = "$text";
 
     if (text.length > length) {
       return text.substring(0, length);
@@ -169,11 +169,12 @@ class _InfoState extends State<Info> {
 
       List<int> command = [
         0x40,
-        0x0C,
+        0x0E,
         0xFA,
         0xA0,
         (address >> 8) & 0xFF,
         address & 0xFF,
+        0x08,
         ...text.codeUnits,
       ];
 
@@ -240,7 +241,7 @@ class _InfoState extends State<Info> {
                           await writeField(
                             controller: t1,
                             address: 0x003C,
-                            length: 7,
+                            length: 8,
                             button: 1,
                           );
                         }),
@@ -248,7 +249,7 @@ class _InfoState extends State<Info> {
                           await writeField(
                             controller: t2,
                             address: 0x0082,
-                            length: 7,
+                            length: 8,
                             button: 2,
                           );
                         }),
@@ -256,7 +257,7 @@ class _InfoState extends State<Info> {
                           await writeField(
                             controller: t3,
                             address: 0x00C8,
-                            length: 7,
+                            length: 8,
                             button: 3,
                           );
                         }),
