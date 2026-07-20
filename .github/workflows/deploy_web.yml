@@ -5,17 +5,19 @@ on:
     branches:
       - main
 
+# Prevents two pushes from racing and interleaving deployments
+concurrency:
+  group: deploy-lactocontrol-web
+  cancel-in-progress: false
+
 jobs:
   deploy:
-
     runs-on: ubuntu-latest
 
     steps:
-
       # 1. Get code
       - name: Checkout Repository
         uses: actions/checkout@v4
-
 
       # 2. Setup Flutter
       - name: Setup Flutter
@@ -25,34 +27,24 @@ jobs:
           channel: stable
           cache: true
 
-
       # 3. Install packages
       - name: Install Dependencies
         run: flutter pub get
 
-
-      # 4. Clean and Build
+      # 4. Build (clean build, no stale service-worker caching issues)
       - name: Build Flutter Web
         run: |
           flutter clean
           flutter pub get
-          flutter build web --release
+          flutter build web --release --pwa-strategy=none
 
+      # 5. Generate a unique release folder name for this deploy
+      - name: Set release folder name
+        id: vars
+        run: echo "release=${{ github.sha }}" >> "$GITHUB_OUTPUT"
 
-      # 5. Remove old website files
-      - name: Clean VPS Web Folder
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USERNAME }}
-          password: ${{ secrets.VPS_PASSWORD }}
-          port: 22
-          script: |
-            rm -rf /var/www/lactocontrol_web/*
-
-
-      # 6. Upload Flutter Web
-      - name: Upload Web Files
+      # 6. Upload build into a NEW isolated release folder (old site stays live and untouched)
+      - name: Upload build to new release folder
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -60,12 +52,11 @@ jobs:
           password: ${{ secrets.VPS_PASSWORD }}
           port: 22
           source: "build/web/*"
-          target: "/var/www/lactocontrol_web"
+          target: "/var/www/lactocontrol_releases/${{ steps.vars.outputs.release }}"
           strip_components: 2
 
-
-      # 7. Fix permissions + restart nginx
-      - name: Set Permissions
+      # 7. Atomically switch the live symlink to the new release, then clean up old ones
+      - name: Activate new release + cleanup
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -73,7 +64,20 @@ jobs:
           password: ${{ secrets.VPS_PASSWORD }}
           port: 22
           script: |
-            chown -R www-data:www-data /var/www/lactocontrol_web
-            chmod -R 755 /var/www/lactocontrol_web
+            set -e
+            RELEASE_DIR="/var/www/lactocontrol_releases/${{ steps.vars.outputs.release }}"
+            LIVE_LINK="/var/www/lactocontrol_web"
+
+            chown -R www-data:www-data "$RELEASE_DIR"
+            chmod -R 755 "$RELEASE_DIR"
+
+            # Atomic symlink swap - zero downtime, no half-deployed state ever
+            ln -sfn "$RELEASE_DIR" "$LIVE_LINK.tmp"
+            mv -Tf "$LIVE_LINK.tmp" "$LIVE_LINK"
+
             nginx -t
             systemctl reload nginx
+
+            # Keep only the 3 most recent releases to save disk space
+            cd /var/www/lactocontrol_releases
+            ls -dt */ | tail -n +4 | xargs -r rm -rf
