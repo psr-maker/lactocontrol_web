@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lactosure_control/constant/global/loadingflw.dart';
+import 'package:lactosure_control/constant/global/token.dart';
+import 'package:lactosure_control/services/dashboard_service.dart';
 import 'package:lactosure_control/services/web_serial_service.dart';
 
 class Info extends StatefulWidget {
@@ -20,13 +22,7 @@ class _InfoState extends State<Info> {
   bool _channel2Loading = false;
   bool _channel3Loading = false;
   bool _dealerLoading = false;
-  // String fixLength(String text, int length) {
-  //   if (text.length > length) {
-  //     return text.substring(0, length);
-  //   }
 
-  //   return text.padRight(length, ' ');
-  // }
   String fixLength(String text, int length) {
     // Add one leading space
     text = " $text";
@@ -57,13 +53,38 @@ class _InfoState extends State<Info> {
       List<int> writeCommand = [0x40, 0x56, 0xFA, 0xA0, 0x03, 0x0C, ...data];
 
       int lrc = 0;
+
       for (final byte in writeCommand) {
         lrc ^= byte;
       }
 
       writeCommand.add(lrc);
 
-      await sendMachineCommand(writeCommand);
+      // MACHINE WRITE
+      bool success = await sendMachineCommand(writeCommand);
+
+      // AFTER SUCCESS SAVE HISTORY
+      if (success) {
+        int? userId = await TokenCheck.getUserId();
+
+        if (userId != null) {
+          bool saved = await DashboardService.saveDealerHistory(
+            userId: userId,
+
+            dealer1: dealer1.text,
+
+            dealer2: dealer2.text,
+
+            dealer3: dealer3.text,
+          );
+
+          if (saved) {
+            debugPrint("Dealer history saved");
+          } else {
+            debugPrint("Dealer history save failed");
+          }
+        }
+      }
     } finally {
       if (mounted) {
         setState(() {
@@ -73,21 +94,19 @@ class _InfoState extends State<Info> {
     }
   }
 
-  Future<void> sendMachineCommand(List<int> writeCommand) async {
+  Future<bool> sendMachineCommand(List<int> writeCommand) async {
     try {
-      // ============== LOGIN ==============
-
       debugPrint("========== LOGIN ==========");
 
       final login = hex("40 04 06 00 00 42");
 
       final loginResponse = await WebSerialService.write(login);
 
-      debugPrint("LOGIN : ${loginResponse.message}");
+      if (!loginResponse.success) {
+        return false;
+      }
 
       await Future.delayed(const Duration(seconds: 3));
-
-      // ============== WRITE ==============
 
       debugPrint("========== WRITE ==========");
 
@@ -96,14 +115,12 @@ class _InfoState extends State<Info> {
       if (!writeResponse.success) {
         debugPrint("WRITE FAILED : ${writeResponse.message}");
 
-        return;
+        return false;
       }
 
       debugPrint("WRITE SUCCESS : ${writeResponse.message}");
 
       await Future.delayed(const Duration(seconds: 3));
-
-      // ============== LOGOUT ==============
 
       debugPrint("========== LOGOUT ==========");
 
@@ -113,13 +130,21 @@ class _InfoState extends State<Info> {
 
       debugPrint("LOGOUT : ${logoutResponse.message}");
 
-      if (!mounted) return;
+      if (!logoutResponse.success) {
+        return false;
+      }
 
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Machine Write Completed")));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Machine Write Completed")),
+        );
+      }
+
+      return true;
     } catch (e) {
       debugPrint("MACHINE ERROR : $e");
+
+      return false;
     }
   }
 
