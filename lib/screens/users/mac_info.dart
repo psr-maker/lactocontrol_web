@@ -34,6 +34,70 @@ class _InfoState extends State<Info> {
     return text.padRight(length, ' ');
   }
 
+  // Future<void> sendCommand() async {
+  //   if (_dealerLoading) return;
+
+  //   setState(() {
+  //     _dealerLoading = true;
+  //   });
+
+  //   try {
+  //     String value4 = fixLength("_      Dealer", 20);
+  //     String value1 = fixLength(dealer1.text, 20);
+  //     String value2 = fixLength(dealer2.text, 20);
+  //     String value3 = fixLength(dealer3.text, 21);
+
+  //     String fullText = value4 + value1 + value2 + value3;
+
+  //     List<int> data = fullText.codeUnits;
+  //     debugPrint("🍭🍭🍭");
+  //     debugPrint(fullText);
+
+  //     for (int i = 0; i < data.length; i++) {
+  //       debugPrint("$i : ${data[i]} '${String.fromCharCode(data[i])}'");
+  //     }
+  //     List<int> writeCommand = [0x40, 0x56, 0xFA, 0xA0, 0x03, 0x0C, ...data];
+  //     int lrc = 0;
+
+  //     for (final byte in writeCommand) {
+  //       lrc ^= byte;
+  //     }
+
+  //     writeCommand.add(lrc);
+  //     // MACHINE WRITE
+  //     bool success = await sendMachineCommand(writeCommand);
+
+  //     // AFTER SUCCESS SAVE HISTORY
+  //     if (success) {
+  //       int? userId = await TokenCheck.getUserId();
+
+  //       if (userId != null) {
+  //         bool saved = await DashboardService.saveDealerHistory(
+  //           userId: userId,
+
+  //           dealer1: dealer1.text,
+
+  //           dealer2: dealer2.text,
+
+  //           dealer3: dealer3.text,
+  //         );
+
+  //         if (saved) {
+  //           debugPrint("Dealer history saved");
+  //         } else {
+  //           debugPrint("Dealer history save failed");
+  //         }
+  //       }
+  //     }
+  //   } finally {
+  //     if (mounted) {
+  //       setState(() {
+  //         _dealerLoading = false;
+  //       });
+  //     }
+  //   }
+  // }
+
   Future<void> sendCommand() async {
     if (_dealerLoading) return;
 
@@ -42,13 +106,31 @@ class _InfoState extends State<Info> {
     });
 
     try {
-      String value1 = fixLength(dealer1.text, 32);
-      String value2 = fixLength(dealer2.text, 20);
-      String value3 = fixLength(dealer3.text, 29);
+      // 1 - 20
+      String value1 = fixLength("_       Dealer", 21);
 
-      String fullText = value1 + value2 + value3;
+      // 21 - 40
+      String value2 = fixLength(dealer1.text, 20);
+
+      // 41 - 60
+      String value3 = fixLength(dealer2.text, 20);
+
+      // 61 - 80
+      String value4 = fixLength(dealer3.text, 20);
+
+      String fullText = value1 + value2 + value3 + value4;
 
       List<int> data = fullText.codeUnits;
+
+      debugPrint("========== DATA ==========");
+
+      // for (int i = 0; i < data.length; i += 20) {
+      //   int end = i + 20;
+
+      //   String line = String.fromCharCodes(data.sublist(i, end));
+
+      //   debugPrint("${i + 1}-${i + 20} : $line");
+      // }
 
       List<int> writeCommand = [0x40, 0x56, 0xFA, 0xA0, 0x03, 0x0C, ...data];
 
@@ -60,28 +142,21 @@ class _InfoState extends State<Info> {
 
       writeCommand.add(lrc);
 
-      // MACHINE WRITE
       bool success = await sendMachineCommand(writeCommand);
 
-      // AFTER SUCCESS SAVE HISTORY
       if (success) {
         int? userId = await TokenCheck.getUserId();
 
         if (userId != null) {
           bool saved = await DashboardService.saveDealerHistory(
             userId: userId,
-
             dealer1: dealer1.text,
-
             dealer2: dealer2.text,
-
             dealer3: dealer3.text,
           );
 
           if (saved) {
             debugPrint("Dealer history saved");
-          } else {
-            debugPrint("Dealer history save failed");
           }
         }
       }

@@ -106,7 +106,7 @@ class _DashboardhomeState extends State<Dashboardhome> {
         backgroundColor: Color(0xFF11192A),
         foregroundColor: Color(0xFF0B1325),
         title: const Text(
-          "LactoSure Control",
+          " LactoSure Control",
           style: TextStyle(
             color: Color.fromARGB(255, 7, 218, 218),
             fontSize: 18,
