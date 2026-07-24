@@ -23,183 +23,175 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xff0B1E4D), Color(0xff1E293B)],
+      body: Stack(
+        children: [
+          // Full screen background image
+          Positioned.fill(
+            child: Image.asset("assets/login_bg.png", fit: BoxFit.cover),
           ),
-        ),
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 1300),
-            child: Center(
-              child: Container(
-                width: 420,
-                padding: const EdgeInsets.all(35),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(.08),
-                  borderRadius: BorderRadius.circular(25),
-                  border: Border.all(color: Colors.white24),
-                  boxShadow: [
-                    BoxShadow(color: Colors.black26, blurRadius: 20),
-                  ],
-                ),
-                        
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        "Welcome Back",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                        
-                      SizedBox(height: 10),
-                        
-                      Text(
-                        "Login to continue",
-                        style: TextStyle(color: Colors.white70),
-                      ),
-                        
-                      SizedBox(height: 35),
-                        
-                      CustomTextField(
-                        hintText: "Email",
-                        prefixIcon: Icons.email,
-                        controller: emailController,
-                      ),
-                        
-                      SizedBox(height: 20),
-                        
-                      CustomTextField(
-                        hintText: "Password",
-                        prefixIcon: Icons.lock,
-                        obscureText: true,
-                        controller: passwordController,
-                      ),
-                        
-                      SizedBox(height: 15),
-                        
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: TextButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const ForgetPassword(),
-                              ),
-                            );
-                          },
-                          child: const Text(
-                            "Forgot Password?",
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Color.fromARGB(255, 255, 157, 10),
-                            ),
-                          ),
-                        ),
-                      ),
-                        
-                      SizedBox(height: 10),
-                        
-                      CustomButton(
-                        text: "Login",
-                        onPressed: () async {
-                          if (_formKey.currentState!.validate()) {
-                            setState(() {
-                              _isLoading = true;
-                            });
-                            final result = await AuthService.loginUser(
-                              emailController.text,
-                              passwordController.text,
-                            );
-                            setState(() {
-                              _isLoading = false;
-                            });
-                            if (result["success"]) {
-                              String email = result["email"];
-                        
-                              // Admin
-                              if (email.toLowerCase() == "admin") {
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => const AdminScreen(),
-                                  ),
-                                );
-                              }
-                              // User
-                              else {
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => const Dashboardhome(),
-                                  ),
-                                );
-                              }
-                              //}
-                            } else {
-                              CustomSnackbar.show(
-                                context: context,
-                                message: result["message"],
-                                isError: true,
-                              );
-                            }
-                          }
-                        },
-                        isLoading: _isLoading,
-                        buttonclr: const Color.fromARGB(
-                          255,
-                          255,
-                          157,
-                          10,
-                        ),
-                        txtclr: Colors.white,
-                      ),
-                        
-                      SizedBox(height: 25),
-                        
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+
+          // Dark overlay
+          Positioned.fill(
+            child: Container(color: Colors.black.withOpacity(0.45)),
+          ),
+
+          // Login card on the right
+          Align(
+            alignment: Alignment.centerRight,
+            child: Container(
+              width: 480,
+              // color: const Color(0xff0B1E4D).withOpacity(0.75),
+              child: Center(
+                child: SingleChildScrollView(
+                  child: Container(
+                    width: 400,
+                    padding: const EdgeInsets.all(35),
+                    decoration: BoxDecoration(
+                      color: Color(0xff0B1E4D).withOpacity(0.75),
+                      borderRadius: BorderRadius.circular(25),
+                      border: Border.all(color: Colors.white24),
+                    ),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            "Don't have an account?",
-                            style: TextStyle(color: Colors.white),
+                            "Welcome Back",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        
-                          TextButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const RegisterUser(),
+                          SizedBox(height: 10),
+                          Text(
+                            "Login to continue",
+                            style: TextStyle(color: Colors.white70),
+                          ),
+                          SizedBox(height: 35),
+                          CustomTextField(
+                            hintText: "Email",
+                            prefixIcon: Icons.email,
+                            controller: emailController,
+                          ),
+                          SizedBox(height: 20),
+                          CustomTextField(
+                            hintText: "Password",
+                            prefixIcon: Icons.lock,
+                            obscureText: true,
+                            controller: passwordController,
+                          ),
+                          SizedBox(height: 15),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const ForgetPassword(),
+                                  ),
+                                );
+                              },
+                              child: const Text(
+                                "Forgot Password?",
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Color.fromARGB(255, 255, 157, 10),
                                 ),
-                              );
-                            },
-                            child: const Text(
-                              "Register",
-                              style: TextStyle(
-                                color: Color.fromARGB(255, 255, 157, 10),
                               ),
                             ),
+                          ),
+                          SizedBox(height: 10),
+                          CustomButton(
+                            text: "Login",
+                            onPressed: () async {
+                              if (_formKey.currentState!.validate()) {
+                                setState(() {
+                                  _isLoading = true;
+                                });
+                                final result = await AuthService.loginUser(
+                                  emailController.text,
+                                  passwordController.text,
+                                );
+                                setState(() {
+                                  _isLoading = false;
+                                });
+                                if (result["success"]) {
+                                  String email = result["email"];
+                                  // Admin
+                                  if (email.toLowerCase() == "admin") {
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => const AdminScreen(),
+                                      ),
+                                    );
+                                  }
+                                  // User
+                                  else {
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => const Dashboardhome(),
+                                      ),
+                                    );
+                                  }
+                                  //}
+                                } else {
+                                  CustomSnackbar.show(
+                                    context: context,
+                                    message: result["message"],
+                                    isError: true,
+                                  );
+                                }
+                              }
+                            },
+                            isLoading: _isLoading,
+                            buttonclr: const Color.fromARGB(
+                              255,
+                              255,
+                              157,
+                              10,
+                            ),
+                            txtclr: Colors.white,
+                          ),
+                          SizedBox(height: 25),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Don't have an account?",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => const RegisterUser(),
+                                    ),
+                                  );
+                                },
+                                child: const Text(
+                                  "Register",
+                                  style: TextStyle(
+                                    color: Color.fromARGB(255, 255, 157, 10),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }

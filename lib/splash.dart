@@ -22,6 +22,8 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> checkLogin() async {
+    await Future.delayed(const Duration(seconds: 5));
+
     try {
       final loggedIn = await TokenCheck.isLoggedIn();
 

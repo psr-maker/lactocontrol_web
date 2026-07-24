@@ -52,146 +52,154 @@ class _RegisterUserState extends State<RegisterUser> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Color.fromARGB(255, 0, 25, 83),
-              Color.fromARGB(255, 55, 61, 71),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: Image.asset("assets/login_bg.png", fit: BoxFit.cover),
           ),
-        ),
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 1300),
-            child: Center(
-              child: Container(
-                width: 420,
-                padding: const EdgeInsets.all(35),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(.08),
-                  borderRadius: BorderRadius.circular(25),
-                  border: Border.all(color: Colors.white24),
-                  boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 20)],
-                ),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    children: [
-                      const Text(
-                        "Create Account",
-                        style: TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
 
-                      const SizedBox(height: 10),
-
-                      const Text(
-                        "Register to continue",
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: Colors.white70,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-
-                      const SizedBox(height: 40),
-
-                      /// NAME
-                      CustomTextField(
-                        hintText: "Full Name",
-                        prefixIcon: Icons.person,
-                        controller: nameController,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "Enter your name";
-                          }
-                          return null;
-                        },
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      /// EMAIL
-                      CustomTextField(
-                        hintText: "Email",
-                        prefixIcon: Icons.email,
-                        controller: emailController,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "Enter your Email";
-                          }
-                          return null;
-                        },
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      /// PASSWORD
-                      CustomTextField(
-                        hintText: "Password",
-                        prefixIcon: Icons.lock,
-                        obscureText: true,
-                        controller: passwordController,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "Enter your Password";
-                          }
-                          return null;
-                        },
-                      ),
-
-                      const SizedBox(height: 30),
-
-                      /// REGISTER BUTTON
-                      CustomButton(
-                        text: "Register",
-                        isLoading: _isLoading,
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            register();
-                          }
-                        },
-                        buttonclr: Color.fromARGB(255, 255, 157, 10),
-                        txtclr: Colors.white,
-                      ),
-
-                      const SizedBox(height: 25),
-
-                      /// LOGIN OPTION
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text(
-                            "Already have an account?",
-                            style: TextStyle(color: Colors.white),
-                          ),
-
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: const Text(
-                              "Login",
-                              style: TextStyle(
-                                color: Color.fromARGB(255, 255, 157, 10),
-                              ),
-                            ),
-                          ),
+          // Dark overlay
+          Positioned.fill(
+            child: Container(color: Colors.black.withOpacity(0.45)),
+          ),
+          Align(
+            alignment: Alignment.centerRight,
+            child: Container(
+              width: 480,
+              child: Center(
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(30),
+                    child: Container(
+                      width: 400,
+                      padding: const EdgeInsets.all(35),
+                      decoration: BoxDecoration(
+                        color: Color(0xff0B1E4D).withOpacity(0.75),
+                        borderRadius: BorderRadius.circular(25),
+                        border: Border.all(color: Colors.white24),
+                        boxShadow: [
+                          BoxShadow(color: Colors.black26, blurRadius: 20),
                         ],
                       ),
-                    ],
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          children: [
+                            const Text(
+                              "Create Account",
+                              style: TextStyle(
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+
+                            const SizedBox(height: 10),
+
+                            const Text(
+                              "Register to continue",
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Colors.white70,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+
+                            const SizedBox(height: 40),
+
+                            /// NAME
+                            CustomTextField(
+                              hintText: "Full Name",
+                              prefixIcon: Icons.person,
+                              controller: nameController,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Enter your name";
+                                }
+                                return null;
+                              },
+                            ),
+
+                            const SizedBox(height: 20),
+
+                            /// EMAIL
+                            CustomTextField(
+                              hintText: "Email",
+                              prefixIcon: Icons.email,
+                              controller: emailController,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Enter your Email";
+                                }
+                                return null;
+                              },
+                            ),
+
+                            const SizedBox(height: 20),
+
+                            /// PASSWORD
+                            CustomTextField(
+                              hintText: "Password",
+                              prefixIcon: Icons.lock,
+                              obscureText: true,
+                              controller: passwordController,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Enter your Password";
+                                }
+                                return null;
+                              },
+                            ),
+
+                            const SizedBox(height: 30),
+
+                            /// REGISTER BUTTON
+                            CustomButton(
+                              text: "Register",
+                              isLoading: _isLoading,
+                              onPressed: () {
+                                if (_formKey.currentState!.validate()) {
+                                  register();
+                                }
+                              },
+                              buttonclr: Color.fromARGB(255, 255, 157, 10),
+                              txtclr: Colors.white,
+                            ),
+
+                            const SizedBox(height: 25),
+
+                            /// LOGIN OPTION
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Text(
+                                  "Already have an account?",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text(
+                                    "Login",
+                                    style: TextStyle(
+                                      color: Color.fromARGB(255, 255, 157, 10),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
