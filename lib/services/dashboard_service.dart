@@ -45,4 +45,23 @@ class DashboardService {
 
     return data.map((e) => DealerHistory.fromJson(e)).toList();
   }
+
+  Future<List<dynamic>> getDealerHistory(int userId) async {
+    try {
+      final response = await http.get(
+        Uri.parse("$url/Dashboard/userhistory/$userId"),
+        headers: {"Content-Type": "application/json"},
+      );
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body) as List<dynamic>;
+      } else {
+        throw Exception(
+          "Failed to load history. Status: ${response.statusCode}",
+        );
+      }
+    } catch (e) {
+      throw Exception("Error fetching history: $e");
+    }
+  }
 }

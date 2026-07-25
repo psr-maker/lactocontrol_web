@@ -34,70 +34,6 @@ class _InfoState extends State<Info> {
     return text.padRight(length, ' ');
   }
 
-  // Future<void> sendCommand() async {
-  //   if (_dealerLoading) return;
-
-  //   setState(() {
-  //     _dealerLoading = true;
-  //   });
-
-  //   try {
-  //     String value4 = fixLength("_      Dealer", 20);
-  //     String value1 = fixLength(dealer1.text, 20);
-  //     String value2 = fixLength(dealer2.text, 20);
-  //     String value3 = fixLength(dealer3.text, 21);
-
-  //     String fullText = value4 + value1 + value2 + value3;
-
-  //     List<int> data = fullText.codeUnits;
-  //     debugPrint("🍭🍭🍭");
-  //     debugPrint(fullText);
-
-  //     for (int i = 0; i < data.length; i++) {
-  //       debugPrint("$i : ${data[i]} '${String.fromCharCode(data[i])}'");
-  //     }
-  //     List<int> writeCommand = [0x40, 0x56, 0xFA, 0xA0, 0x03, 0x0C, ...data];
-  //     int lrc = 0;
-
-  //     for (final byte in writeCommand) {
-  //       lrc ^= byte;
-  //     }
-
-  //     writeCommand.add(lrc);
-  //     // MACHINE WRITE
-  //     bool success = await sendMachineCommand(writeCommand);
-
-  //     // AFTER SUCCESS SAVE HISTORY
-  //     if (success) {
-  //       int? userId = await TokenCheck.getUserId();
-
-  //       if (userId != null) {
-  //         bool saved = await DashboardService.saveDealerHistory(
-  //           userId: userId,
-
-  //           dealer1: dealer1.text,
-
-  //           dealer2: dealer2.text,
-
-  //           dealer3: dealer3.text,
-  //         );
-
-  //         if (saved) {
-  //           debugPrint("Dealer history saved");
-  //         } else {
-  //           debugPrint("Dealer history save failed");
-  //         }
-  //       }
-  //     }
-  //   } finally {
-  //     if (mounted) {
-  //       setState(() {
-  //         _dealerLoading = false;
-  //       });
-  //     }
-  //   }
-  // }
-
   Future<void> sendCommand() async {
     if (_dealerLoading) return;
 
@@ -123,14 +59,6 @@ class _InfoState extends State<Info> {
       List<int> data = fullText.codeUnits;
 
       debugPrint("========== DATA ==========");
-
-      // for (int i = 0; i < data.length; i += 20) {
-      //   int end = i + 20;
-
-      //   String line = String.fromCharCodes(data.sublist(i, end));
-
-      //   debugPrint("${i + 1}-${i + 20} : $line");
-      // }
 
       List<int> writeCommand = [0x40, 0x56, 0xFA, 0xA0, 0x03, 0x0C, ...data];
 
@@ -289,7 +217,7 @@ class _InfoState extends State<Info> {
           ),
         ),
         title: const Text(
-          "Correction",
+          "LactoSure Settings",
           style: TextStyle(
             color: Color.fromARGB(255, 7, 218, 218),
             fontSize: 18,
@@ -436,7 +364,7 @@ class _InfoState extends State<Info> {
           Text(
             title.toUpperCase(),
             style: const TextStyle(
-              color: Color(0xFF07DADA),
+              color: Colors.orange,
               fontSize: 20,
               fontWeight: FontWeight.bold,
               letterSpacing: 1,
