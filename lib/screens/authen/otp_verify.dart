@@ -142,17 +142,20 @@ class _OtpVerifyState extends State<OtpVerify> {
     return Scaffold(
       body: Stack(
         children: [
-            Positioned.fill(
-            child: Image.asset("assets/login_bg.png", fit: BoxFit.cover),
+          Positioned.fill(
+            child: Image.asset(
+              "assets/bglogo.png",
+              fit: BoxFit.cover,
+              alignment: Alignment.center,
+            ),
           ),
-
           // Dark overlay
           Positioned.fill(
-            child: Container(color: Colors.black.withOpacity(0.45)),
+            child: Container(color: Colors.black.withOpacity(0.25)),
           ),
 
           Align(
-             alignment: Alignment.centerRight,
+            alignment: Alignment.centerRight,
             child: Container(
               width: 480,
               child: Center(
@@ -161,10 +164,12 @@ class _OtpVerifyState extends State<OtpVerify> {
                     width: 400,
                     padding: const EdgeInsets.all(35),
                     decoration: BoxDecoration(
-                       color: Color(0xff0B1E4D).withOpacity(0.75),
+                      color: Color(0xff0B1E4D).withOpacity(0.75),
                       borderRadius: BorderRadius.circular(25),
                       border: Border.all(color: Colors.white24),
-                      boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 20)],
+                      boxShadow: [
+                        BoxShadow(color: Colors.black26, blurRadius: 20),
+                      ],
                     ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -177,9 +182,9 @@ class _OtpVerifyState extends State<OtpVerify> {
                             color: Colors.white,
                           ),
                         ),
-                          
+
                         const SizedBox(height: 40),
-                          
+
                         Text(
                           "A 6 digit OTP has been sent to\n${widget.email}",
                           textAlign: TextAlign.center,
@@ -189,9 +194,9 @@ class _OtpVerifyState extends State<OtpVerify> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                          
+
                         const SizedBox(height: 40),
-                          
+
                         /// OTP BOXES
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -226,12 +231,12 @@ class _OtpVerifyState extends State<OtpVerify> {
                                     ),
                                   ),
                                 ),
-                          
+
                                 onChanged: (value) {
                                   if (value.isNotEmpty && index < 5) {
                                     FocusScope.of(context).nextFocus();
                                   }
-                          
+
                                   if (value.isEmpty && index > 0) {
                                     FocusScope.of(context).previousFocus();
                                   }
@@ -240,9 +245,9 @@ class _OtpVerifyState extends State<OtpVerify> {
                             ),
                           ),
                         ),
-                          
+
                         const SizedBox(height: 30),
-                          
+
                         /// TIMER
                         Text(
                           timerText,
@@ -252,9 +257,9 @@ class _OtpVerifyState extends State<OtpVerify> {
                             color: Colors.orange,
                           ),
                         ),
-                          
+
                         const SizedBox(height: 20),
-                          
+
                         /// RESEND OTP
                         TextButton(
                           onPressed: canResend
@@ -262,7 +267,7 @@ class _OtpVerifyState extends State<OtpVerify> {
                                   resendOtp();
                                 }
                               : null,
-                          
+
                           child: Text(
                             canResend
                                 ? "Resend OTP"
@@ -274,9 +279,9 @@ class _OtpVerifyState extends State<OtpVerify> {
                             ),
                           ),
                         ),
-                          
+
                         const SizedBox(height: 30),
-                          
+
                         /// VERIFY BUTTON
                         CustomButton(
                           text: "Verify OTP",

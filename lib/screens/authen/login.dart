@@ -25,14 +25,16 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       body: Stack(
         children: [
-          // Full screen background image
           Positioned.fill(
-            child: Image.asset("assets/login_bg.png", fit: BoxFit.cover),
+            child: Image.asset(
+              "assets/bglogo.png",
+              fit: BoxFit.cover,
+              alignment: Alignment.center,
+            ),
           ),
 
-          // Dark overlay
           Positioned.fill(
-            child: Container(color: Colors.black.withOpacity(0.45)),
+            child: Container(color: Colors.black.withOpacity(0.25)),
           ),
 
           // Login card on the right
@@ -149,12 +151,7 @@ class _LoginPageState extends State<LoginPage> {
                               }
                             },
                             isLoading: _isLoading,
-                            buttonclr: const Color.fromARGB(
-                              255,
-                              255,
-                              157,
-                              10,
-                            ),
+                            buttonclr: const Color.fromARGB(255, 255, 157, 10),
                             txtclr: Colors.white,
                           ),
                           SizedBox(height: 25),

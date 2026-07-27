@@ -55,12 +55,16 @@ class _RegisterUserState extends State<RegisterUser> {
       body: Stack(
         children: [
           Positioned.fill(
-            child: Image.asset("assets/login_bg.png", fit: BoxFit.cover),
+            child: Image.asset(
+              "assets/bglogo.png",
+              fit: BoxFit.cover,
+              alignment: Alignment.center,
+            ),
           ),
 
           // Dark overlay
           Positioned.fill(
-            child: Container(color: Colors.black.withOpacity(0.45)),
+            child: Container(color: Colors.black.withOpacity(0.25)),
           ),
           Align(
             alignment: Alignment.centerRight,
