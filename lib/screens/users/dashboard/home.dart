@@ -391,6 +391,7 @@ class _DashboardhomeState extends State<Dashboardhome> {
                     ],
                   ),
                 ),
+                SizedBox(width: 15),
                 Expanded(
                   child: GestureDetector(
                     onTap: () {
@@ -408,53 +409,51 @@ class _DashboardhomeState extends State<Dashboardhome> {
                         MaterialPageRoute(builder: (context) => Info()),
                       );
                     },
-                    child: Center(
-                      child: Container(
-                        width: 300,
-                        height: 220,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF151F36),
-                          borderRadius: BorderRadius.circular(18),
-                          border: Border.all(color: const Color(0xFF273554)),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.30),
-                              blurRadius: 20,
-                              offset: const Offset(0, 10),
+                    child: Container(
+                      // width: 300,
+                      height: MediaQuery.of(context).size.height*0.35,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF151F36),
+                        borderRadius: BorderRadius.circular(18),
+                        border: Border.all(color: const Color(0xFF273554)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.30),
+                            blurRadius: 20,
+                            offset: const Offset(0, 10),
+                          ),
+                        ],
+                      ),
+                      child: const Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CircleAvatar(
+                            radius: 35,
+                            backgroundColor: Color(0xFF4FD1C5),
+                            child: Icon(
+                              Icons.settings,
+                              color: Color(0xFF0B1325),
+                              size: 34,
                             ),
-                          ],
-                        ),
-                        child: const Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            CircleAvatar(
-                              radius: 35,
-                              backgroundColor: Color(0xFF4FD1C5),
-                              child: Icon(
-                                Icons.settings,
-                                color: Color(0xFF0B1325),
-                                size: 34,
-                              ),
+                          ),
+                          SizedBox(height: 20),
+                          Text(
+                            "Settings",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
                             ),
-                            SizedBox(height: 20),
-                            Text(
-                              "Settings",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                              ),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            "Configure your machine",
+                            style: TextStyle(
+                              color: Colors.white60,
+                              fontSize: 14,
                             ),
-                            SizedBox(height: 8),
-                            Text(
-                              "Configure your machine",
-                              style: TextStyle(
-                                color: Colors.white60,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
